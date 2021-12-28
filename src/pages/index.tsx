@@ -1,20 +1,17 @@
+import { getOptionsForVote } from "@/utils/getRandomPokemon";
 import { trpc } from "@/utils/trpc";
 import type { NextPage } from "next";
 
 const Home: NextPage = () => {
-  const { data, isLoading } = trpc.useQuery(["hello", { text: "asd" }]);
-
-  if (isLoading) return <div>loading...</div>;
-
-  if (data) return <div>{data.greeting}</div>;
+  const [first, second] = getOptionsForVote();
 
   return (
-    <main className="h-screen w-screen flex flex-col justify-center items-center">
+    <main className="flex flex-col items-center justify-center w-screen h-screen">
       <h1 className="text-2xl text-center">Which pokemon is rounder?</h1>
-      <section className="border rounded p-8 mt-4 flex justify-between max-w-2xl items-center">
-        <div className="bg-red-400 w-16 h-16">ASd</div>
+      <section className="flex items-center justify-between max-w-2xl p-8 mt-4 border rounded">
+        <div className="w-16 h-16 bg-red-400">{first}</div>
         <div>VS</div>
-        <div className="bg-red-400 w-16 h-16">ASd</div>
+        <div className="w-16 h-16 bg-red-400">{second}</div>
       </section>
     </main>
   );

@@ -28,6 +28,8 @@ const Home: NextPage = ({
     { id: pokemonPair[1] },
   ]);
 
+  const voteMutation = trpc.useMutation(["cast-vote"]);
+
   const isLoading =
     !firstPokemonQueryResult.isLoading &&
     firstPokemonQueryResult.data &&
@@ -35,6 +37,16 @@ const Home: NextPage = ({
     secondPokemonQueryResult.data;
 
   const voteForRoundest = (selected: number) => () => {
+    const [first, second] = pokemonPair;
+
+    const [votedFor, votedAgainst] =
+      selected === first ? [first, second] : [second, first];
+
+    voteMutation.mutate({
+      votedFor,
+      votedAgainst,
+    });
+
     setPokemonPair(getOptionsForVote());
   };
 

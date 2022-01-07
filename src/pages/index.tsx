@@ -6,7 +6,8 @@ import type {
   InferGetServerSidePropsType,
   GetServerSideProps,
 } from "next";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useState, FC } from "react";
+import { inferQueryResponse } from "./api/trpc/[trpc]";
 
 let renderCount = 0;
 
@@ -27,38 +28,53 @@ const Home: NextPage = ({
     { id: pokemonPair[1] },
   ]);
 
-  if (firstPokemonQueryResult.isLoading || secondPokemonQueryResult.isLoading)
-    return null;
+  const isLoading =
+    !firstPokemonQueryResult.isLoading &&
+    firstPokemonQueryResult.data &&
+    !secondPokemonQueryResult.isLoading &&
+    secondPokemonQueryResult.data;
 
-  const voteForRoundest = (selected: number) => {};
+  const voteForRoundest = (selected: number) => () => {
+    setPokemonPair(getOptionsForVote());
+  };
 
   return (
     <main className="flex flex-col items-center justify-center w-screen h-screen">
       <h1 className="text-2xl text-center">Which pokemon is rounder?</h1>
       <section className="flex items-center justify-between max-w-2xl p-8 mt-4 border rounded">
-        <div className="flex flex-col items-center justify-center w-64">
-          <img
-            className="w-full"
-            src={firstPokemonQueryResult.data?.sprite ?? undefined}
-          />
-          <h1 className="block text-2xl text-center capitalize mt-[-2rem]">
-            {firstPokemonQueryResult.data?.name}
-          </h1>
-          <Button style={{ marginTop: "1rem" }}>This one</Button>
-        </div>
-        <div>VS</div>
-        <div className="flex flex-col items-center justify-center w-64">
-          <img
-            className="w-full"
-            src={secondPokemonQueryResult.data?.sprite ?? undefined}
-          />
-          <h1 className="block text-2xl text-center capitalize mt-[-2rem]">
-            {secondPokemonQueryResult.data?.name}
-          </h1>
-          <Button style={{ marginTop: "1rem" }}>This one</Button>
-        </div>
+        {isLoading && (
+          <>
+            <PokemonSection
+              pokemon={firstPokemonQueryResult.data}
+              vote={voteForRoundest(pokemonPair[0])}
+            />
+            <div>VS</div>
+            <PokemonSection
+              pokemon={secondPokemonQueryResult.data}
+              vote={voteForRoundest(pokemonPair[1])}
+            />
+          </>
+        )}
       </section>
     </main>
+  );
+};
+
+type PokemonFromServer = inferQueryResponse<"get-pokemon">;
+const PokemonSection: FC<{ pokemon: PokemonFromServer; vote: () => void }> = ({
+  pokemon,
+  vote,
+}) => {
+  return (
+    <div className="flex flex-col items-center justify-center w-64">
+      <img className="w-full" src={pokemon?.sprite ?? undefined} />
+      <h1 className="block text-2xl text-center capitalize mt-[-2rem]">
+        {pokemon?.name}
+      </h1>
+      <Button onClickHandler={vote} style={{ marginTop: "1rem" }}>
+        This one
+      </Button>
+    </div>
   );
 };
 

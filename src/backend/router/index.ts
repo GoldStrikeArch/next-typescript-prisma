@@ -1,16 +1,21 @@
 import * as trpc from "@trpc/server";
+import { PokemonClient } from "pokenode-ts";
 
 import { z } from "zod";
 
-export const appRouter = trpc.router().query("hello", {
-  input: z
-    .object({
-      text: z.string().nullish(),
-    })
-    .nullish(),
-  resolve({ input }) {
+let apiCount = 0;
+export const appRouter = trpc.router().query("get-pokemon", {
+  input: z.object({ id: z.number() }),
+  async resolve({ input }) {
+    const api = new PokemonClient();
+
+    console.log(`api count is ${apiCount++}`);
+
+    const pokemon = await api.getPokemonById(input.id);
+
     return {
-      greeting: `hello ${input?.text ?? "world"}`,
+      name: pokemon.name,
+      sprite: pokemon.sprites.front_default,
     };
   },
 });

@@ -1,3 +1,4 @@
+import Button from "@/components/shared/Button";
 import { getOptionsForVote } from "@/utils/getRandomPokemon";
 import { trpc } from "@/utils/trpc";
 import type {
@@ -13,22 +14,29 @@ const Home: NextPage = ({
   pokemonPairIDs,
 }: InferGetServerSidePropsType<typeof getServerSideProps>) => {
   console.log(`renderCount is ${renderCount++}`);
-  const [first, second] = pokemonPairIDs;
+  const [first, second] = pokemonPairIDs as number[];
 
-  const firstPokemonQueryResult = trpc.useQuery(["get-pokemon", { id: first }]);
+  const [pokemonPair, setPokemonPair] = useState([first, second]);
+
+  const firstPokemonQueryResult = trpc.useQuery([
+    "get-pokemon",
+    { id: pokemonPair[0] },
+  ]);
   const secondPokemonQueryResult = trpc.useQuery([
     "get-pokemon",
-    { id: second },
+    { id: pokemonPair[1] },
   ]);
 
   if (firstPokemonQueryResult.isLoading || secondPokemonQueryResult.isLoading)
     return null;
 
+  const voteForRoundest = (selected: number) => {};
+
   return (
     <main className="flex flex-col items-center justify-center w-screen h-screen">
       <h1 className="text-2xl text-center">Which pokemon is rounder?</h1>
       <section className="flex items-center justify-between max-w-2xl p-8 mt-4 border rounded">
-        <div className="w-64 h-64bg-red-200">
+        <div className="flex flex-col items-center justify-center w-64">
           <img
             className="w-full"
             src={firstPokemonQueryResult.data?.sprite ?? undefined}
@@ -36,9 +44,10 @@ const Home: NextPage = ({
           <h1 className="block text-2xl text-center capitalize mt-[-2rem]">
             {firstPokemonQueryResult.data?.name}
           </h1>
+          <Button style={{ marginTop: "1rem" }}>This one</Button>
         </div>
         <div>VS</div>
-        <div className="w-64 h-64bg-red-200">
+        <div className="flex flex-col items-center justify-center w-64">
           <img
             className="w-full"
             src={secondPokemonQueryResult.data?.sprite ?? undefined}
@@ -46,6 +55,7 @@ const Home: NextPage = ({
           <h1 className="block text-2xl text-center capitalize mt-[-2rem]">
             {secondPokemonQueryResult.data?.name}
           </h1>
+          <Button style={{ marginTop: "1rem" }}>This one</Button>
         </div>
       </section>
     </main>

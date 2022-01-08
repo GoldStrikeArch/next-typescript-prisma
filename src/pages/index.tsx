@@ -8,6 +8,7 @@ import type {
 } from "next";
 import { useEffect, useMemo, useState, FC } from "react";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
+import Image from "next/image";
 
 let renderCount = 0;
 
@@ -79,7 +80,13 @@ const PokemonSection: FC<{ pokemon: PokemonFromServer; vote: () => void }> = ({
 }) => {
   return (
     <div className="flex flex-col items-center justify-center w-64">
-      <img className="w-full" src={pokemon?.sprite ?? undefined} />
+      <Image
+        className="w-full"
+        src={pokemon?.sprite ?? "/assets/images/no_image.png"}
+        width={256}
+        height={256}
+        layout="fixed"
+      />
       <h1 className="block text-2xl text-center capitalize mt-[-2rem]">
         {pokemon?.name}
       </h1>

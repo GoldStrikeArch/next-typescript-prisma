@@ -82,7 +82,7 @@ const PokemonSection: FC<{ pokemon: PokemonFromServer; vote: () => void }> = ({
     <div className="flex flex-col items-center justify-center w-64">
       <Image
         className="w-full"
-        src={pokemon?.sprite ?? "/assets/images/no_image.png"}
+        src={pokemon?.spriteUrl ?? "/assets/images/no_image.png"}
         width={256}
         height={256}
         layout="fixed"

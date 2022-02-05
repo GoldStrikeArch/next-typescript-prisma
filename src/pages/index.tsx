@@ -31,8 +31,6 @@ const Home: NextPage = ({
 
   const voteMutation = trpc.useMutation(["cast-vote"]);
 
-  const populateDb = trpc.useMutation(["populate-db"]);
-
   const isLoading =
     !firstPokemonQueryResult.isLoading &&
     firstPokemonQueryResult.data &&
@@ -71,13 +69,6 @@ const Home: NextPage = ({
           </>
         )}
       </section>
-      <button
-        onClick={() => {
-          populateDb.mutate();
-        }}
-      >
-        Attempt 3
-      </button>
     </main>
   );
 };

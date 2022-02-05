@@ -9,6 +9,7 @@ import type {
 import { useEffect, useMemo, useState, FC } from "react";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
 import Image from "next/image";
+import { populateDb } from "../../scripts/populateDbWithAllPokemons";
 
 let renderCount = 0;
 
@@ -69,6 +70,7 @@ const Home: NextPage = ({
           </>
         )}
       </section>
+      <button onClick={() => populateDb()}>First time only</button>
     </main>
   );
 };

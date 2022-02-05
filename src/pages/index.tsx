@@ -9,7 +9,6 @@ import type {
 import { useEffect, useMemo, useState, FC } from "react";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
 import Image from "next/image";
-import { populateDb } from "../../scripts/populateDbWithAllPokemons";
 
 let renderCount = 0;
 
@@ -31,6 +30,8 @@ const Home: NextPage = ({
   ]);
 
   const voteMutation = trpc.useMutation(["cast-vote"]);
+
+  const populateDb = trpc.useMutation(["populate-db"]);
 
   const isLoading =
     !firstPokemonQueryResult.isLoading &&
@@ -70,7 +71,13 @@ const Home: NextPage = ({
           </>
         )}
       </section>
-      <button onClick={() => populateDb()}>First time only</button>
+      <button
+        onClick={() => {
+          populateDb.mutate();
+        }}
+      >
+        Attempt 3
+      </button>
     </main>
   );
 };

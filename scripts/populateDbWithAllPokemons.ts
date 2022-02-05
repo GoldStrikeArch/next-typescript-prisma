@@ -2,7 +2,7 @@ import { PokemonClient } from "pokenode-ts";
 
 import { prisma } from "../src/backend/utils/prisma";
 
-export const populateDb = async () => {
+const populateDb = async () => {
   const api = new PokemonClient();
 
   const allPokemons = await api.listPokemons(0, 493);
@@ -22,4 +22,4 @@ export const populateDb = async () => {
   console.log("Creation?", creation);
 };
 
-// populateDb();
+populateDb();

@@ -9,6 +9,7 @@ import type {
 import { useEffect, useMemo, useState, FC } from "react";
 import { inferQueryResponse } from "./api/trpc/[trpc]";
 import Image from "next/image";
+import Link from "next/link";
 
 let renderCount = 0;
 
@@ -31,7 +32,7 @@ const Home: NextPage = ({
 
   const voteMutation = trpc.useMutation(["cast-vote"]);
 
-  const isLoading =
+  const dataLoaded =
     !firstPokemonQueryResult.isLoading &&
     firstPokemonQueryResult.data &&
     !secondPokemonQueryResult.isLoading &&
@@ -52,11 +53,12 @@ const Home: NextPage = ({
   };
 
   return (
-    <main className="flex flex-col items-center justify-center w-screen h-screen">
-      <h1 className="text-2xl text-center">Which pokemon is rounder?</h1>
-      <section className="flex items-center justify-between max-w-2xl p-8 mt-4 border rounded">
-        {isLoading && (
-          <>
+    <>
+      <main className="flex flex-col items-center justify-center w-screen h-screen">
+        <h1 className="text-2xl text-center">Which pokemon is rounder?</h1>
+        {!dataLoaded && <img src="/rings.svg" className="w-64" />}
+        {dataLoaded && (
+          <section className="flex items-center justify-between max-w-2xl p-8 mt-4 border rounded">
             <PokemonSection
               pokemon={firstPokemonQueryResult.data}
               vote={voteForRoundest(pokemonPair[0])}
@@ -66,10 +68,15 @@ const Home: NextPage = ({
               pokemon={secondPokemonQueryResult.data}
               vote={voteForRoundest(pokemonPair[1])}
             />
-          </>
+          </section>
         )}
-      </section>
-    </main>
+      </main>
+      <footer className="absolute bottom-0 flex items-center justify-center w-full p-4">
+        <Link href="/results" passHref>
+          <a className="text-2xl bold">Results</a>
+        </Link>
+      </footer>
+    </>
   );
 };
 

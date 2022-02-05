@@ -33,7 +33,7 @@ const getPokemonInOrder = async () => {
 const calculatePercent = (x: number, y: number) => {
   if (x === 0) return 0;
   if (x + y === 0) return 0;
-  return (x / x + y) * 100;
+  return (x / (x + y)) * 100;
 };
 
 const Pokemon: FC<{ pokemon: PokemonQueryResult[number] }> = ({ pokemon }) => {
@@ -55,9 +55,15 @@ const ResultsPage: FC<{
   return (
     <div className="flex flex-col items-center gap-8">
       <h2 className="m-3 text-3xl">Results</h2>
-      {pokemonList.map((pokemon) => (
-        <Pokemon pokemon={pokemon} key={Math.random() * Date.now()} />
-      ))}
+      {pokemonList
+        .sort(
+          (a, b) =>
+            calculatePercent(b._count.VoteFor, b._count.VoteAgainst) -
+            calculatePercent(a._count.VoteFor, a._count.VoteAgainst)
+        )
+        .map((pokemon) => (
+          <Pokemon pokemon={pokemon} key={Math.random() * Date.now()} />
+        ))}
     </div>
   );
 };
